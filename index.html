@@ -161,6 +161,8 @@
             border: 1px solid var(--border);
             transition: transform 0.25s ease, box-shadow 0.25s ease;
             cursor: pointer;
+            display: flex;
+            flex-direction: column;
         }
 
         .post-card:hover {
@@ -177,6 +179,7 @@
 
         .post-card-body {
             padding: 24px;
+            flex: 1;
         }
 
         .post-card-meta {
@@ -188,12 +191,6 @@
             color: var(--text-muted);
             text-transform: uppercase;
             letter-spacing: 0.06em;
-        }
-
-        .post-card-meta span {
-            display: flex;
-            align-items: center;
-            gap: 4px;
         }
 
         .post-card-title {
@@ -209,24 +206,17 @@
             font-size: 0.92rem;
             color: var(--text-muted);
             line-height: 1.6;
-            display: -webkit-box;
-            -webkit-line-clamp: 3;
-            -webkit-box-orient: vertical;
-            overflow: hidden;
         }
 
         .post-card-footer {
             padding: 0 24px 24px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
         }
 
         .post-card-read-more {
             font-size: 0.85rem;
             font-weight: 600;
             color: var(--accent);
-            display: flex;
+            display: inline-flex;
             align-items: center;
             gap: 6px;
             transition: gap 0.2s ease;
@@ -237,13 +227,24 @@
         }
 
         /* ============================================
+           EMPTY STATE
+           ============================================ */
+        .empty-state {
+            grid-column: 1 / -1;
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--text-muted);
+            font-size: 1rem;
+        }
+
+        /* ============================================
            ABOUT SECTION
            ============================================ */
         .about-section {
             display: none;
             max-width: 720px;
             margin: 0 auto;
-            padding: 80px 24px;
+            padding: 160px 24px 80px;
         }
 
         .about-section.active {
@@ -277,7 +278,7 @@
             display: none;
             max-width: 720px;
             margin: 0 auto;
-            padding: 100px 24px 80px;
+            padding: 120px 24px 80px;
         }
 
         .post-view.active {
@@ -315,6 +316,8 @@
             margin-bottom: 32px;
             display: flex;
             gap: 16px;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
         }
 
         .post-view .post-content {
@@ -327,9 +330,29 @@
             margin-bottom: 24px;
         }
 
+        .post-view .post-content h2 {
+            font-family: var(--font-serif);
+            font-size: 1.5rem;
+            margin: 40px 0 16px;
+            letter-spacing: -0.01em;
+        }
+
         .post-view .post-content img {
             border-radius: var(--card-radius);
             margin: 32px 0;
+        }
+
+        .post-view .post-content blockquote {
+            border-left: 3px solid var(--accent-light);
+            padding-left: 20px;
+            margin: 32px 0;
+            font-style: italic;
+            color: var(--text-muted);
+        }
+
+        .post-view .post-content a {
+            text-decoration: underline;
+            text-underline-offset: 3px;
         }
 
         /* ============================================
@@ -382,19 +405,19 @@
     </header>
 
     <!-- ==========================================
-         HOME VIEW – Hero + Post Grid
+         HOME VIEW
          ========================================== -->
     <div id="home-view">
         <section class="hero">
             <div class="hero-content">
-                <h1>Thoughts, stories & ideas.</h1>
+                <h1>Thoughts, stories &amp; ideas.</h1>
                 <p>A personal blog about the things I'm learning, building, and thinking about.</p>
             </div>
         </section>
 
         <main>
             <div class="post-grid" id="post-grid">
-                <!-- Posts are rendered here by JavaScript -->
+                <!-- Posts are rendered here automatically -->
             </div>
         </main>
     </div>
@@ -405,20 +428,20 @@
     <div id="about-view" class="about-section">
         <h2>About Me</h2>
         <p>
-            Hey! I'm <span class="highlight">Totti</span>, and this is my little corner of the internet. 
-            I started this blog as a space to share my thoughts, document what I'm learning, 
+            Hey! I'm <span class="highlight">Totti</span>, and this is my little corner of the internet.
+            I started this blog as a space to share my thoughts, document what I'm learning,
             and connect with people who are into similar things.
         </p>
         <p>
-            I'm a student, a curious human, and a firm believer that the best ideas often come 
-            from the simplest moments. Here you'll find posts about 
-            <span class="highlight">[your subject / topic]</span>, 
+            I'm a student, a curious human, and a firm believer that the best ideas often come
+            from the simplest moments. Here you'll find posts about
+            <span class="highlight">[your subject / topic]</span>,
             personal growth, and whatever else is on my mind.
         </p>
         <p>
-            When I'm not writing, you can find me 
-            <span class="highlight">[something you enjoy]</span>, 
-            probably with a coffee in hand. Thanks for stopping by — I hope you find something 
+            When I'm not writing, you can find me
+            <span class="highlight">[something you enjoy]</span>,
+            probably with a coffee in hand. Thanks for stopping by — I hope you find something
             here that resonates with you.
         </p>
     </div>
@@ -443,93 +466,16 @@
     </footer>
 
     <!-- ==========================================
-         JAVASCRIPT – Post Management
+         LOAD POSTS DATA
+         This MUST come before the script below.
+         ========================================== -->
+    <script src="posts.js"></script>
+
+    <!-- ==========================================
+         RENDERING LOGIC
+         You generally don't need to edit this.
          ========================================== -->
     <script>
-        /* =============================================
-           📝 HOW TO ADD / REMOVE POSTS
-           =============================================
-           
-           To ADD a new post:
-           1. Copy one of the objects below (from { to }).
-           2. Paste it as a new item inside the `posts` array.
-           3. Update the fields: title, date, category, excerpt,
-              content (use HTML tags like <p>), and image URL.
-           4. Save this file and refresh your browser.
-
-           To REMOVE a post:
-           Delete the entire object { ... } for that post.
-
-           Tips:
-           - The `id` must be unique for each post.
-           - The `image` can be any URL (e.g., from Unsplash).
-           - Keep `excerpt` short (2-3 lines).
-           - Use `content` for the full article (HTML allowed).
-           ============================================= */
-
-        const posts = [
-            {
-                id: 1,
-                title: "Why I Started This Blog",
-                date: "March 15, 2026",
-                category: "Personal",
-                excerpt: "A short reflection on why I finally decided to hit publish and create a space of my own on the internet.",
-                image: "https://images.unsplash.com/photo-1499750310107-5fef28a66643?w=800&q=80",
-                content: `
-                    <p>For a long time, I kept telling myself I'd start a blog "someday." Someday when I had more time, when I had something important to say, when I felt ready.</p>
-                    <p>But here's the thing — there's never a perfect moment. You just have to start.</p>
-                    <p>This blog is my attempt to create a space where I can think out loud, document what I'm learning, and maybe, hopefully, connect with other people who are figuring things out too.</p>
-                    <p>Thanks for being here. It means more than you know.</p>
-                `
-            },
-            {
-                id: 2,
-                title: "The Books That Shaped My Thinking",
-                date: "March 8, 2026",
-                category: "Books",
-                excerpt: "A few titles that have genuinely changed the way I see the world — and why I keep coming back to them.",
-                image: "https://images.unsplash.com/photo-1512820790803-83ca734da794?w=800&q=80",
-                content: `
-                    <p>I've always been a reader, but there are a handful of books that have left a lasting mark on how I think and live.</p>
-                    <p>Some of them are practical, some are philosophical, and some just told a story so good I couldn't stop thinking about it for weeks.</p>
-                    <p>I'll keep this list short and meaningful. These aren't just "good books" — they're books that changed something in me.</p>
-                    <p>More to come in a future post.</p>
-                `
-            },
-            {
-                id: 3,
-                title: "A Simple Way to Stay Organized",
-                date: "February 28, 2026",
-                category: "Productivity",
-                excerpt: "I've tried a dozen systems. This is the one that actually stuck — and it's embarrassingly simple.",
-                image: "https://images.unsplash.com/photo-1484480974693-6ca0a78fb36b?w=800&q=80",
-                content: `
-                    <p>I used to be the kind of person who spent more time organizing my to-do list than actually doing the things on it.</p>
-                    <p>Eventually, I realized the best system is the one you'll actually use — even on your worst days.</p>
-                    <p>For me, that's a simple three-item list: one big thing, two small things, and a clear stopping point.</p>
-                    <p>That's it. No apps, no color-coded tags. Just a piece of paper and a pen.</p>
-                `
-            },
-            {
-                id: 4,
-                title: "What I'm Learning This Semester",
-                date: "February 14, 2026",
-                category: "College",
-                excerpt: "A quick snapshot of the ideas, projects, and rabbit holes I'm diving into right now.",
-                image: "https://images.unsplash.com/photo-1456513080510-7bf3a84b82f8?w=800&q=80",
-                content: `
-                    <p>This semester has been a mix of things I expected and things I absolutely did not.</p>
-                    <p>I'm taking a course that's pushing me way outside my comfort zone, and honestly, that's been the best part.</p>
-                    <p>I'm also working on a small project on the side — nothing fancy, just something to keep my hands busy and my brain engaged.</p>
-                    <p>More updates soon.</p>
-                `
-            }
-        ];
-
-        /* =============================================
-           ⚙️ RENDERING LOGIC – No need to edit below
-           ============================================= */
-
         const postGrid = document.getElementById('post-grid');
         const homeView = document.getElementById('home-view');
         const aboutView = document.getElementById('about-view');
@@ -537,25 +483,52 @@
         const navHome = document.getElementById('nav-home');
         const navAbout = document.getElementById('nav-about');
 
-        // Render all post cards
+        /* Turn "2026-03-15" into "March 15, 2026" */
+        function formatDate(isoString) {
+            const d = new Date(isoString + 'T00:00:00');
+            if (isNaN(d)) return isoString;
+            return d.toLocaleDateString('en-US', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+            });
+        }
+
+        /* Only show published posts, newest first */
+        function getVisiblePosts() {
+            return posts
+                .filter(post => post.published === true)
+                .sort((a, b) => new Date(b.date) - new Date(a.date));
+        }
+
         function renderPosts() {
+            const visible = getVisiblePosts();
             postGrid.innerHTML = '';
 
-            posts.forEach(post => {
+            if (visible.length === 0) {
+                postGrid.innerHTML = `
+                    <p class="empty-state">
+                        No posts yet — check back soon!
+                    </p>
+                `;
+                return;
+            }
+
+            visible.forEach(post => {
                 const card = document.createElement('article');
                 card.className = 'post-card';
                 card.onclick = () => openPost(post.id);
 
                 card.innerHTML = `
-                    <img 
-                        class="post-card-image" 
-                        src="${post.image}" 
+                    <img
+                        class="post-card-image"
+                        src="${post.image}"
                         alt="${post.title}"
                         loading="lazy"
                     >
                     <div class="post-card-body">
                         <div class="post-card-meta">
-                            <span>${post.date}</span>
+                            <span>${formatDate(post.date)}</span>
                             <span>·</span>
                             <span>${post.category}</span>
                         </div>
@@ -571,7 +544,6 @@
             });
         }
 
-        // Show home view
         function showHome() {
             homeView.style.display = 'block';
             aboutView.classList.remove('active');
@@ -581,7 +553,6 @@
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
-        // Show about view
         function showAbout() {
             homeView.style.display = 'none';
             aboutView.classList.add('active');
@@ -591,7 +562,6 @@
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
-        // Open a single post
         function openPost(id) {
             const post = posts.find(p => p.id === id);
             if (!post) return;
@@ -604,7 +574,7 @@
 
             document.getElementById('post-view-title').textContent = post.title;
             document.getElementById('post-view-meta').innerHTML = `
-                <span>${post.date}</span>
+                <span>${formatDate(post.date)}</span>
                 <span>·</span>
                 <span>${post.category}</span>
             `;
@@ -613,9 +583,18 @@
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
-        // Initialize
-        renderPosts();
-        showHome();
+        /* Boot up */
+        if (typeof posts === 'undefined') {
+            postGrid.innerHTML = `
+                <p class="empty-state">
+                    ⚠️ Could not find posts.js — make sure it's in the same folder as index.html.
+                </p>
+            `;
+        } else {
+            console.log(`Totti Blog loaded: ${getVisiblePosts().length} published, ${posts.length - getVisiblePosts().length} hidden.`);
+            renderPosts();
+            showHome();
+        }
     </script>
 
 </body>
