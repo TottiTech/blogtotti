@@ -1,134 +1,622 @@
-<style>
-    :root {
-        --bg-color: #f6f4f0;
-        --text-dark: #333333;
-        --text-light: #555555;
-        --border-color: #e5e0d8;
-    }
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Totti Blog</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Playfair+Display:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        /* ============================================
+           ROOT VARIABLES – CHANGE COLORS HERE
+           ============================================ */
+        :root {
+            --bg: #faf9f6;
+            --surface: #ffffff;
+            --text: #1a1a1a;
+            --text-muted: #6b6b6b;
+            --accent: #1a1a1a;
+            --accent-light: #e8e5e0;
+            --border: #e5e2dc;
+            --font-sans: 'Inter', sans-serif;
+            --font-serif: 'Playfair Display', serif;
+            --max-width: 1100px;
+            --card-radius: 12px;
+        }
 
-    * { margin: 0; padding: 0; box-sizing: border-box; }
+        /* ============================================
+           RESET & BASE
+           ============================================ */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-    body {
-        background-color: var(--bg-color);
-        color: var(--text-dark);
-        font-family: 'Inter', sans-serif;
-        line-height: 1.6;
-    }
+        body {
+            font-family: var(--font-sans);
+            background-color: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+        }
 
-    header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: 2rem 5%;
-        border-bottom: 1px solid var(--border-color);
-    }
+        img {
+            max-width: 100%;
+            display: block;
+        }
 
-    .logo {
-        font-family: 'Cormorant Garamond', serif;
-        font-size: 2.2rem;
-        font-weight: 300;
-        letter-spacing: -0.5px;
-        color: var(--text-dark);
-        text-decoration: none;
-        flex: 1;
-    }
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
 
-    nav {
-        flex: 1;
-        display: flex;
-        justify-content: center;
-        gap: 2.5rem;
-    }
+        /* ============================================
+           HEADER & NAVIGATION
+           ============================================ */
+        header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 100;
+            background: rgba(250, 249, 246, 0.92);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--border);
+        }
 
-    nav a {
-        text-decoration: none;
-        color: var(--text-dark);
-        font-size: 0.85rem;
-        font-weight: 500;
-        letter-spacing: 1.5px;
-        text-transform: lowercase;
-    }
+        .nav-container {
+            max-width: var(--max-width);
+            margin: 0 auto;
+            padding: 0 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            height: 72px;
+        }
 
-    .header-spacer { flex: 1; }
+        .logo {
+            font-family: var(--font-serif);
+            font-size: 1.5rem;
+            font-weight: 600;
+            letter-spacing: -0.02em;
+        }
 
-    main {
-        padding: 4rem 5%;
-        max-width: 1400px;
-        margin: 0 auto;
-    }
+        .nav-links {
+            display: flex;
+            gap: 32px;
+            list-style: none;
+        }
 
-    .section-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 3rem;
-        padding-left: 1rem;
-    }
+        .nav-links a {
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: var(--text-muted);
+            transition: color 0.2s ease;
+            letter-spacing: 0.02em;
+        }
 
-    .section-title {
-        font-family: 'Mrs Saint Delafield', cursive;
-        font-size: 4rem;
-        font-weight: 400;
-        color: var(--text-dark);
-        transform: rotate(-3deg);
-    }
+        .nav-links a:hover,
+        .nav-links a.active {
+            color: var(--text);
+        }
 
-    .post-grid {
-        display: grid;
-        grid-template-columns: repeat(3, 1fr);
-        gap: 2.5rem;
-    }
+        /* ============================================
+           HERO SECTION
+           ============================================ */
+        .hero {
+            margin-top: 72px;
+            padding: 80px 24px 60px;
+            text-align: center;
+            background: var(--surface);
+            border-bottom: 1px solid var(--border);
+        }
 
-    .post-card {
-        display: flex;
-        flex-direction: column;
-        gap: 1.2rem;
-    }
+        .hero-content {
+            max-width: 640px;
+            margin: 0 auto;
+        }
 
-    .post-image {
-        width: 100%;
-        aspect-ratio: 4/3;
-        object-fit: cover;
-        background-color: #e5e0d8;
-    }
+        .hero h1 {
+            font-family: var(--font-serif);
+            font-size: clamp(2.2rem, 5vw, 3.2rem);
+            font-weight: 600;
+            line-height: 1.15;
+            letter-spacing: -0.02em;
+            margin-bottom: 16px;
+        }
 
-    .post-title {
-        font-size: 0.95rem;
-        font-weight: 400;
-        color: var(--text-light);
-    }
-</style>
-<header>
-    <a href="#" class="logo">Totti Blog</a>
-    <nav>
-        <a href="#">home</a>
-        <a href="#">about</a>
-    </nav>
-    <div class="header-spacer"></div>
-</header>
+        .hero p {
+            font-size: 1.05rem;
+            color: var(--text-muted);
+            max-width: 480px;
+            margin: 0 auto;
+            line-height: 1.7;
+        }
 
-<main>
-    <section class="blog-section">
-        <div class="section-header">
-            <h1 class="section-title">featured posts</h1>
-            <div class="nav-arrows">< ></div>
+        /* ============================================
+           MAIN CONTENT
+           ============================================ */
+        main {
+            max-width: var(--max-width);
+            margin: 0 auto;
+            padding: 0 24px 80px;
+        }
+
+        /* ============================================
+           POST GRID
+           ============================================ */
+        .post-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 32px;
+            padding-top: 48px;
+        }
+
+        .post-card {
+            background: var(--surface);
+            border-radius: var(--card-radius);
+            overflow: hidden;
+            border: 1px solid var(--border);
+            transition: transform 0.25s ease, box-shadow 0.25s ease;
+            cursor: pointer;
+        }
+
+        .post-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 32px rgba(0, 0, 0, 0.06);
+        }
+
+        .post-card-image {
+            width: 100%;
+            height: 220px;
+            object-fit: cover;
+            background-color: var(--accent-light);
+        }
+
+        .post-card-body {
+            padding: 24px;
+        }
+
+        .post-card-meta {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 12px;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+        }
+
+        .post-card-meta span {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .post-card-title {
+            font-family: var(--font-serif);
+            font-size: 1.25rem;
+            font-weight: 600;
+            line-height: 1.3;
+            margin-bottom: 10px;
+            letter-spacing: -0.01em;
+        }
+
+        .post-card-excerpt {
+            font-size: 0.92rem;
+            color: var(--text-muted);
+            line-height: 1.6;
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .post-card-footer {
+            padding: 0 24px 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .post-card-read-more {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--accent);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: gap 0.2s ease;
+        }
+
+        .post-card:hover .post-card-read-more {
+            gap: 10px;
+        }
+
+        /* ============================================
+           ABOUT SECTION
+           ============================================ */
+        .about-section {
+            display: none;
+            max-width: 720px;
+            margin: 0 auto;
+            padding: 80px 24px;
+        }
+
+        .about-section.active {
+            display: block;
+        }
+
+        .about-section h2 {
+            font-family: var(--font-serif);
+            font-size: 2rem;
+            font-weight: 600;
+            margin-bottom: 24px;
+            letter-spacing: -0.02em;
+        }
+
+        .about-section p {
+            font-size: 1.05rem;
+            color: var(--text-muted);
+            line-height: 1.8;
+            margin-bottom: 20px;
+        }
+
+        .about-section .highlight {
+            color: var(--text);
+            font-weight: 500;
+        }
+
+        /* ============================================
+           POST VIEW (single post)
+           ============================================ */
+        .post-view {
+            display: none;
+            max-width: 720px;
+            margin: 0 auto;
+            padding: 100px 24px 80px;
+        }
+
+        .post-view.active {
+            display: block;
+        }
+
+        .post-view .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: var(--text-muted);
+            margin-bottom: 32px;
+            cursor: pointer;
+            transition: color 0.2s ease;
+        }
+
+        .post-view .back-link:hover {
+            color: var(--text);
+        }
+
+        .post-view h1 {
+            font-family: var(--font-serif);
+            font-size: clamp(1.8rem, 4vw, 2.6rem);
+            font-weight: 600;
+            line-height: 1.2;
+            letter-spacing: -0.02em;
+            margin-bottom: 16px;
+        }
+
+        .post-view .post-meta {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin-bottom: 32px;
+            display: flex;
+            gap: 16px;
+        }
+
+        .post-view .post-content {
+            font-size: 1.05rem;
+            line-height: 1.8;
+            color: var(--text);
+        }
+
+        .post-view .post-content p {
+            margin-bottom: 24px;
+        }
+
+        .post-view .post-content img {
+            border-radius: var(--card-radius);
+            margin: 32px 0;
+        }
+
+        /* ============================================
+           FOOTER
+           ============================================ */
+        footer {
+            border-top: 1px solid var(--border);
+            padding: 32px 24px;
+            text-align: center;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        /* ============================================
+           RESPONSIVE
+           ============================================ */
+        @media (max-width: 640px) {
+            .nav-links {
+                gap: 20px;
+            }
+
+            .hero {
+                padding: 60px 20px 40px;
+            }
+
+            .post-grid {
+                grid-template-columns: 1fr;
+                gap: 24px;
+            }
+
+            .post-card-image {
+                height: 180px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ==========================================
+         HEADER / NAVIGATION
+         ========================================== -->
+    <header>
+        <div class="nav-container">
+            <a href="#" class="logo" onclick="showHome(); return false;">Totti Blog</a>
+            <ul class="nav-links">
+                <li><a href="#" id="nav-home" class="active" onclick="showHome(); return false;">Home</a></li>
+                <li><a href="#" id="nav-about" onclick="showAbout(); return false;">About Me</a></li>
+            </ul>
         </div>
+    </header>
 
-        <div class="post-grid">
-            <article class="post-card">
-                <img src="image_c1a5a3.jpg" alt="Living Room" class="post-image">
-                <p class="post-title">Tour our Living Room & Lounge</p>
-            </article>
+    <!-- ==========================================
+         HOME VIEW – Hero + Post Grid
+         ========================================== -->
+    <div id="home-view">
+        <section class="hero">
+            <div class="hero-content">
+                <h1>Thoughts, stories & ideas.</h1>
+                <p>A personal blog about the things I'm learning, building, and thinking about.</p>
+            </div>
+        </section>
 
-            <article class="post-card">
-                <img src="[https://images.unsplash.com/photo-1556910103-1c02745a872e?auto=format&fit=crop&q=80&w=800](https://images.unsplash.com/photo-1556910103-1c02745a872e?auto=format&fit=crop&q=80&w=800)" alt="Kitchen" class="post-image">
-                <p class="post-title">Full Kitchen Tour</p>
-            </article>
+        <main>
+            <div class="post-grid" id="post-grid">
+                <!-- Posts are rendered here by JavaScript -->
+            </div>
+        </main>
+    </div>
 
-            <article class="post-card">
-                <img src="[https://images.unsplash.com/photo-1593640408182-31c70c8268f5?auto=format&fit=crop&q=80&w=800](https://images.unsplash.com/photo-1593640408182-31c70c8268f5?auto=format&fit=crop&q=80&w=800)" alt="Office" class="post-image">
-                <p class="post-title">2026 Home Office Tour</p>
-            </article>
+    <!-- ==========================================
+         ABOUT VIEW
+         ========================================== -->
+    <div id="about-view" class="about-section">
+        <h2>About Me</h2>
+        <p>
+            Hey! I'm <span class="highlight">Totti</span>, and this is my little corner of the internet. 
+            I started this blog as a space to share my thoughts, document what I'm learning, 
+            and connect with people who are into similar things.
+        </p>
+        <p>
+            I'm a student, a curious human, and a firm believer that the best ideas often come 
+            from the simplest moments. Here you'll find posts about 
+            <span class="highlight">[your subject / topic]</span>, 
+            personal growth, and whatever else is on my mind.
+        </p>
+        <p>
+            When I'm not writing, you can find me 
+            <span class="highlight">[something you enjoy]</span>, 
+            probably with a coffee in hand. Thanks for stopping by — I hope you find something 
+            here that resonates with you.
+        </p>
+    </div>
+
+    <!-- ==========================================
+         SINGLE POST VIEW
+         ========================================== -->
+    <div id="post-view" class="post-view">
+        <div class="back-link" onclick="showHome()">
+            ← Back to all posts
         </div>
-    </section>
-</main>
+        <h1 id="post-view-title"></h1>
+        <div class="post-meta" id="post-view-meta"></div>
+        <div class="post-content" id="post-view-content"></div>
+    </div>
+
+    <!-- ==========================================
+         FOOTER
+         ========================================== -->
+    <footer>
+        <p>&copy; 2026 Totti Blog. All rights reserved.</p>
+    </footer>
+
+    <!-- ==========================================
+         JAVASCRIPT – Post Management
+         ========================================== -->
+    <script>
+        /* =============================================
+           📝 HOW TO ADD / REMOVE POSTS
+           =============================================
+           
+           To ADD a new post:
+           1. Copy one of the objects below (from { to }).
+           2. Paste it as a new item inside the `posts` array.
+           3. Update the fields: title, date, category, excerpt,
+              content (use HTML tags like <p>), and image URL.
+           4. Save this file and refresh your browser.
+
+           To REMOVE a post:
+           Delete the entire object { ... } for that post.
+
+           Tips:
+           - The `id` must be unique for each post.
+           - The `image` can be any URL (e.g., from Unsplash).
+           - Keep `excerpt` short (2-3 lines).
+           - Use `content` for the full article (HTML allowed).
+           ============================================= */
+
+        const posts = [
+            {
+                id: 1,
+                title: "Why I Started This Blog",
+                date: "March 15, 2026",
+                category: "Personal",
+                excerpt: "A short reflection on why I finally decided to hit publish and create a space of my own on the internet.",
+                image: "https://images.unsplash.com/photo-1499750310107-5fef28a66643?w=800&q=80",
+                content: `
+                    <p>For a long time, I kept telling myself I'd start a blog "someday." Someday when I had more time, when I had something important to say, when I felt ready.</p>
+                    <p>But here's the thing — there's never a perfect moment. You just have to start.</p>
+                    <p>This blog is my attempt to create a space where I can think out loud, document what I'm learning, and maybe, hopefully, connect with other people who are figuring things out too.</p>
+                    <p>Thanks for being here. It means more than you know.</p>
+                `
+            },
+            {
+                id: 2,
+                title: "The Books That Shaped My Thinking",
+                date: "March 8, 2026",
+                category: "Books",
+                excerpt: "A few titles that have genuinely changed the way I see the world — and why I keep coming back to them.",
+                image: "https://images.unsplash.com/photo-1512820790803-83ca734da794?w=800&q=80",
+                content: `
+                    <p>I've always been a reader, but there are a handful of books that have left a lasting mark on how I think and live.</p>
+                    <p>Some of them are practical, some are philosophical, and some just told a story so good I couldn't stop thinking about it for weeks.</p>
+                    <p>I'll keep this list short and meaningful. These aren't just "good books" — they're books that changed something in me.</p>
+                    <p>More to come in a future post.</p>
+                `
+            },
+            {
+                id: 3,
+                title: "A Simple Way to Stay Organized",
+                date: "February 28, 2026",
+                category: "Productivity",
+                excerpt: "I've tried a dozen systems. This is the one that actually stuck — and it's embarrassingly simple.",
+                image: "https://images.unsplash.com/photo-1484480974693-6ca0a78fb36b?w=800&q=80",
+                content: `
+                    <p>I used to be the kind of person who spent more time organizing my to-do list than actually doing the things on it.</p>
+                    <p>Eventually, I realized the best system is the one you'll actually use — even on your worst days.</p>
+                    <p>For me, that's a simple three-item list: one big thing, two small things, and a clear stopping point.</p>
+                    <p>That's it. No apps, no color-coded tags. Just a piece of paper and a pen.</p>
+                `
+            },
+            {
+                id: 4,
+                title: "What I'm Learning This Semester",
+                date: "February 14, 2026",
+                category: "College",
+                excerpt: "A quick snapshot of the ideas, projects, and rabbit holes I'm diving into right now.",
+                image: "https://images.unsplash.com/photo-1456513080510-7bf3a84b82f8?w=800&q=80",
+                content: `
+                    <p>This semester has been a mix of things I expected and things I absolutely did not.</p>
+                    <p>I'm taking a course that's pushing me way outside my comfort zone, and honestly, that's been the best part.</p>
+                    <p>I'm also working on a small project on the side — nothing fancy, just something to keep my hands busy and my brain engaged.</p>
+                    <p>More updates soon.</p>
+                `
+            }
+        ];
+
+        /* =============================================
+           ⚙️ RENDERING LOGIC – No need to edit below
+           ============================================= */
+
+        const postGrid = document.getElementById('post-grid');
+        const homeView = document.getElementById('home-view');
+        const aboutView = document.getElementById('about-view');
+        const postView = document.getElementById('post-view');
+        const navHome = document.getElementById('nav-home');
+        const navAbout = document.getElementById('nav-about');
+
+        // Render all post cards
+        function renderPosts() {
+            postGrid.innerHTML = '';
+
+            posts.forEach(post => {
+                const card = document.createElement('article');
+                card.className = 'post-card';
+                card.onclick = () => openPost(post.id);
+
+                card.innerHTML = `
+                    <img 
+                        class="post-card-image" 
+                        src="${post.image}" 
+                        alt="${post.title}"
+                        loading="lazy"
+                    >
+                    <div class="post-card-body">
+                        <div class="post-card-meta">
+                            <span>${post.date}</span>
+                            <span>·</span>
+                            <span>${post.category}</span>
+                        </div>
+                        <h2 class="post-card-title">${post.title}</h2>
+                        <p class="post-card-excerpt">${post.excerpt}</p>
+                    </div>
+                    <div class="post-card-footer">
+                        <span class="post-card-read-more">Read more →</span>
+                    </div>
+                `;
+
+                postGrid.appendChild(card);
+            });
+        }
+
+        // Show home view
+        function showHome() {
+            homeView.style.display = 'block';
+            aboutView.classList.remove('active');
+            postView.classList.remove('active');
+            navHome.classList.add('active');
+            navAbout.classList.remove('active');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // Show about view
+        function showAbout() {
+            homeView.style.display = 'none';
+            aboutView.classList.add('active');
+            postView.classList.remove('active');
+            navHome.classList.remove('active');
+            navAbout.classList.add('active');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // Open a single post
+        function openPost(id) {
+            const post = posts.find(p => p.id === id);
+            if (!post) return;
+
+            homeView.style.display = 'none';
+            aboutView.classList.remove('active');
+            postView.classList.add('active');
+            navHome.classList.remove('active');
+            navAbout.classList.remove('active');
+
+            document.getElementById('post-view-title').textContent = post.title;
+            document.getElementById('post-view-meta').innerHTML = `
+                <span>${post.date}</span>
+                <span>·</span>
+                <span>${post.category}</span>
+            `;
+            document.getElementById('post-view-content').innerHTML = post.content;
+
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // Initialize
+        renderPosts();
+        showHome();
+    </script>
+
+</body>
+</html>
