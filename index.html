@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -81,6 +81,7 @@
             font-size: 1.5rem;
             font-weight: 600;
             letter-spacing: -0.02em;
+            cursor: pointer;
         }
 
         .nav-links {
@@ -95,6 +96,7 @@
             color: var(--text-muted);
             transition: color 0.2s ease;
             letter-spacing: 0.02em;
+            cursor: pointer;
         }
 
         .nav-links a:hover,
@@ -154,6 +156,12 @@
             padding-top: 48px;
         }
 
+        .post-card-link {
+            display: block;
+            color: inherit;
+            text-decoration: none;
+        }
+
         .post-card {
             background: var(--surface);
             border-radius: var(--card-radius);
@@ -163,6 +171,7 @@
             cursor: pointer;
             display: flex;
             flex-direction: column;
+            height: 100%;
         }
 
         .post-card:hover {
@@ -396,10 +405,10 @@
          ========================================== -->
     <header>
         <div class="nav-container">
-            <a href="#" class="logo" onclick="showHome(); return false;">Totti Blog</a>
+            <a href="#" class="logo" id="logo-link">Totti Blog</a>
             <ul class="nav-links">
-                <li><a href="#" id="nav-home" class="active" onclick="showHome(); return false;">Home</a></li>
-                <li><a href="#" id="nav-about" onclick="showAbout(); return false;">About Me</a></li>
+                <li><a href="#" id="nav-home" class="active">Home</a></li>
+                <li><a href="#" id="nav-about">About Me</a></li>
             </ul>
         </div>
     </header>
@@ -439,7 +448,7 @@
          SINGLE POST VIEW
          ========================================== -->
     <div id="post-view" class="post-view">
-        <div class="back-link" onclick="showHome()">
+        <div class="back-link" id="back-link">
             ← Voltar para home
         </div>
         <h1 id="post-view-title"></h1>
@@ -471,12 +480,14 @@
         const postView = document.getElementById('post-view');
         const navHome = document.getElementById('nav-home');
         const navAbout = document.getElementById('nav-about');
+        const logoLink = document.getElementById('logo-link');
+        const backLink = document.getElementById('back-link');
 
-        /* Turn "2026-03-15" into "March 15, 2026" */
+        /* Turn "2026-03-15" into "15 de março de 2026" */
         function formatDate(isoString) {
             const d = new Date(isoString + 'T00:00:00');
             if (isNaN(d)) return isoString;
-            return d.toLocaleDateString('en-US', {
+            return d.toLocaleDateString('pt-BR', {
                 year: 'numeric',
                 month: 'long',
                 day: 'numeric'
@@ -497,42 +508,47 @@
             if (visible.length === 0) {
                 postGrid.innerHTML = `
                     <p class="empty-state">
-                        No posts yet — check back soon!
+                        Nenhum post por aqui ainda — volte em breve!
                     </p>
                 `;
                 return;
             }
 
             visible.forEach(post => {
-                const card = document.createElement('article');
-                card.className = 'post-card';
-                card.onclick = () => openPost(post.id);
+                /* Wrap each card in a real <a> tag so the link is shareable
+                   and right-click → "Copy link" works natively. */
+                const link = document.createElement('a');
+                link.className = 'post-card-link';
+                link.href = `#post-${post.id}`;
 
-                card.innerHTML = `
-                    <img
-                        class="post-card-image"
-                        src="${post.image}"
-                        alt="${post.title}"
-                        loading="lazy"
-                    >
-                    <div class="post-card-body">
-                        <div class="post-card-meta">
-                            <span>${formatDate(post.date)}</span>
-                            <span>·</span>
-                            <span>${post.category}</span>
+                link.innerHTML = `
+                    <article class="post-card">
+                        <img
+                            class="post-card-image"
+                            src="${post.image}"
+                            alt="${post.title}"
+                            loading="lazy"
+                        >
+                        <div class="post-card-body">
+                            <div class="post-card-meta">
+                                <span>${formatDate(post.date)}</span>
+                                <span>·</span>
+                                <span>${post.category}</span>
+                            </div>
+                            <h2 class="post-card-title">${post.title}</h2>
+                            <p class="post-card-excerpt">${post.excerpt}</p>
                         </div>
-                        <h2 class="post-card-title">${post.title}</h2>
-                        <p class="post-card-excerpt">${post.excerpt}</p>
-                    </div>
-                    <div class="post-card-footer">
-                        <span class="post-card-read-more">Read more →</span>
-                    </div>
+                        <div class="post-card-footer">
+                            <span class="post-card-read-more">Ler mais →</span>
+                        </div>
+                    </article>
                 `;
 
-                postGrid.appendChild(card);
+                postGrid.appendChild(link);
             });
         }
 
+        /* ----- View helpers ----- */
         function showHome() {
             homeView.style.display = 'block';
             aboutView.classList.remove('active');
@@ -551,9 +567,9 @@
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
-        function openPost(id) {
-            const post = posts.find(p => p.id === id);
-            if (!post) return;
+        function renderPostView(id) {
+            const post = posts.find(p => p.id === id && p.published === true);
+            if (!post) return false;
 
             homeView.style.display = 'none';
             aboutView.classList.remove('active');
@@ -570,21 +586,67 @@
             document.getElementById('post-view-content').innerHTML = post.content;
 
             window.scrollTo({ top: 0, behavior: 'smooth' });
+            return true;
         }
+
+        /* ----- Hash-based routing -----
+           #post-3   → abre o post com id 3
+           #about    → abre a página About
+           (vazio)   → home                                      */
+        function route() {
+            const hash = window.location.hash;
+
+            if (hash.startsWith('#post-')) {
+                const id = parseInt(hash.replace('#post-', ''), 10);
+                if (!renderPostView(id)) {
+                    /* Post não existe ou está despublicado → volta pra home */
+                    window.location.hash = '';
+                }
+                return;
+            }
+
+            if (hash === '#about') {
+                showAbout();
+                return;
+            }
+
+            showHome();
+        }
+
+        /* ----- Navegação via hash (links compartilháveis) ----- */
+        function goToHome()    { window.location.hash = ''; }
+        function goToAbout()   { window.location.hash = '#about'; }
+
+        /* Nav links */
+        navHome.addEventListener('click', (e) => {
+            e.preventDefault();
+            goToHome();
+        });
+        navAbout.addEventListener('click', (e) => {
+            e.preventDefault();
+            goToAbout();
+        });
+        logoLink.addEventListener('click', (e) => {
+            e.preventDefault();
+            goToHome();
+        });
+        backLink.addEventListener('click', () => {
+            goToHome();
+        });
+
+        /* Responde a mudanças na URL (inclui back/forward do navegador) */
+        window.addEventListener('hashchange', route);
 
         /* Boot up */
         if (typeof posts === 'undefined') {
             postGrid.innerHTML = `
                 <p class="empty-state">
-                    ⚠️ Could not find posts.js — make sure it's in the same folder as index.html.
+                    ⚠️ Não encontrei o posts.js — confira se ele está na mesma pasta do index.html.
                 </p>
             `;
         } else {
-            console.log(`Totti Blog loaded: ${getVisiblePosts().length} published, ${posts.length - getVisiblePosts().length} hidden.`);
+            console.log(`Totti Blog carregado: ${getVisiblePosts().length} publicados, ${posts.length - getVisiblePosts().length} ocultos.`);
             renderPosts();
-            showHome();
+            route();  /* abre a view correta baseada na URL atual */
         }
-    </script>
-
-</body>
-</html>
+  
